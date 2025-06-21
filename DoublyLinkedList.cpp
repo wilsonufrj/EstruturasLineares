@@ -1,5 +1,5 @@
 template <typename T>
-class SortedDoublyLinkedList : public LinearDataStructure<T> {
+class DoublyLinkedList : public LinearDataStructure<T> {
  private:
   struct Node {
     T data;
@@ -43,11 +43,9 @@ class SortedDoublyLinkedList : public LinearDataStructure<T> {
   }
 
  public:
-  SortedDoublyLinkedList()
-      : LinearDataStructure<T>(), head(nullptr), tail(nullptr) {}
+  DoublyLinkedList() : LinearDataStructure<T>(), head(nullptr), tail(nullptr) {}
 
-  SortedDoublyLinkedList(std::initializer_list<T> init)
-      : SortedDoublyLinkedList() {
+  DoublyLinkedList(std::initializer_list<T> init) : DoublyLinkedList() {
     for (const auto& item : init) {
       insertAtEnd(item);
     }
@@ -55,8 +53,7 @@ class SortedDoublyLinkedList : public LinearDataStructure<T> {
   }
 
   template <typename InputIt>
-  SortedDoublyLinkedList(InputIt first, InputIt last)
-      : SortedDoublyLinkedList() {
+  DoublyLinkedList(InputIt first, InputIt last) : DoublyLinkedList() {
     for (auto it = first; it != last; ++it) {
       insertAtEnd(*it);
     }
