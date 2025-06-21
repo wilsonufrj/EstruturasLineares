@@ -21,10 +21,7 @@ class SinglyLinkedList : public LinearDataStructure<T> {
 
   bool isEmpty() const override { return this->size == 0; }
 
-  bool isFull() const override {
-    return false;  // Lista dinâmica nunca está cheia (a menos que falte
-                   // memória)
-  }
+  bool isFull() const override { return false; }
 
   size_t length() const override { return this->size; }
 

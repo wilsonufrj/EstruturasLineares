@@ -1,24 +1,66 @@
 template <typename T>
-class DoublyLinkedList : public LinearDataStructure<T> {
+class SortedDoublyLinkedList : public LinearDataStructure<T> {
  private:
   struct Node {
     T data;
     std::unique_ptr<Node> next;
-    Node *prev;
+    Node* prev;
 
-    Node(const T &data) : data(data), next(nullptr), prev(nullptr) {}
+    Node(const T& data) : data(data), next(nullptr), prev(nullptr) {}
   };
 
   std::unique_ptr<Node> head;
-  Node *tail;
+  Node* tail;
+
+  void bubbleSort() {
+    if (!head || !head->next) return;
+
+    bool swapped;
+    Node* current;
+    Node* lastSorted = nullptr;
+
+    do {
+      swapped = false;
+      current = head.get();
+
+      while (current->next.get() != lastSorted) {
+        if (current->data > current->next->data) {
+          std::swap(current->data, current->next->data);
+          swapped = true;
+        }
+        current = current->next.get();
+      }
+      lastSorted = current;
+    } while (swapped);
+  }
+
+  Node* findInsertPosition(const T& value) const {
+    Node* current = head.get();
+    while (current && current->data < value) {
+      current = current->next.get();
+    }
+    return current;
+  }
 
  public:
-  DoublyLinkedList() : LinearDataStructure<T>(), head(nullptr), tail(nullptr) {}
+  SortedDoublyLinkedList()
+      : LinearDataStructure<T>(), head(nullptr), tail(nullptr) {}
 
-  DoublyLinkedList(std::initializer_list<T> init) : DoublyLinkedList() {
-    for (const auto &item : init) {
+  SortedDoublyLinkedList(std::initializer_list<T> init)
+      : SortedDoublyLinkedList() {
+    for (const auto& item : init) {
       insertAtEnd(item);
     }
+    bubbleSort();
+  }
+
+  template <typename InputIt>
+  SortedDoublyLinkedList(InputIt first, InputIt last)
+      : SortedDoublyLinkedList() {
+    for (auto it = first; it != last; ++it) {
+      insertAtEnd(*it);
+    }
+    bubbleSort();
   }
 
   bool isEmpty() const override { return this->size == 0; }
@@ -27,7 +69,18 @@ class DoublyLinkedList : public LinearDataStructure<T> {
 
   size_t length() const override { return this->size; }
 
-  void insertAtStart(const T &value) override {
+  void insertSorted(const T& value) {
+    if (isEmpty() || value <= head->data) {
+      insertAtStart(value);
+    } else if (value >= tail->data) {
+      insertAtEnd(value);
+    } else {
+      Node* position = findInsertPosition(value);
+      insertBeforeNode(position, value);
+    }
+  }
+
+  void insertAtStart(const T& value) override {
     auto newNode = std::make_unique<Node>(value);
     if (isEmpty()) {
       head = std::move(newNode);
@@ -40,7 +93,7 @@ class DoublyLinkedList : public LinearDataStructure<T> {
     this->size++;
   }
 
-  void insertAtEnd(const T &value) override {
+  void insertAtEnd(const T& value) override {
     auto newNode = std::make_unique<Node>(value);
     if (isEmpty()) {
       head = std::move(newNode);
@@ -53,28 +106,13 @@ class DoublyLinkedList : public LinearDataStructure<T> {
     this->size++;
   }
 
-  void insertAtPosition(size_t pos, const T &value) override {
-    if (pos > this->size) {
-      throw std::out_of_range("Posição fora dos limites");
-    }
-
-    if (pos == 0) {
-      insertAtStart(value);
-    } else if (pos == this->size) {
-      insertAtEnd(value);
-    } else {
-      auto newNode = std::make_unique<Node>(value);
-      Node *current = head.get();
-      for (size_t i = 1; i < pos; i++) {
-        current = current->next.get();
-      }
-
-      newNode->next = std::move(current->next);
-      newNode->prev = current;
-      newNode->next->prev = newNode.get();
-      current->next = std::move(newNode);
-      this->size++;
-    }
+  void insertBeforeNode(Node* node, const T& value) {
+    auto newNode = std::make_unique<Node>(value);
+    newNode->prev = node->prev;
+    newNode->next = std::move(node->prev->next);
+    node->prev = newNode.get();
+    newNode->prev->next = std::move(newNode);
+    this->size++;
   }
 
   T removeFromStart() override {
@@ -112,81 +150,35 @@ class DoublyLinkedList : public LinearDataStructure<T> {
     return value;
   }
 
-  T removeFromPosition(size_t pos) override {
-    if (pos >= this->size) {
-      throw std::out_of_range("Posição fora dos limites");
+  bool contains(const T& value) const {
+    Node* current = head.get();
+    while (current && current->data <= value) {
+      if (current->data == value) return true;
+      current = current->next.get();
     }
-
-    if (pos == 0) {
-      return removeFromStart();
-    } else if (pos == this->size - 1) {
-      return removeFromEnd();
-    } else {
-      Node *current = head.get();
-      for (size_t i = 0; i < pos; i++) {
-        current = current->next.get();
-      }
-
-      T value = current->data;
-      current->prev->next = std::move(current->next);
-      current->next->prev = current->prev;
-      this->size--;
-
-      return value;
-    }
+    return false;
   }
 
-  T &getFirst() const override {
+  T& getFirst() const override {
     if (isEmpty()) {
       throw std::underflow_error("Lista esta vazia");
     }
     return head->data;
   }
 
-  T &getLast() const override {
+  T& getLast() const override {
     if (isEmpty()) {
       throw std::underflow_error("Lista esta vazia");
     }
     return tail->data;
   }
 
-  T &getAtPosition(size_t pos) const override {
-    if (pos >= this->size) {
-      throw std::out_of_range("Index fora dos limites");
+  void print() const {
+    Node* current = head.get();
+    while (current) {
+      std::cout << current->data << " ";
+      current = current->next.get();
     }
-
-    if (pos < this->size / 2) {
-      Node *current = head.get();
-      for (size_t i = 0; i < pos; i++) {
-        current = current->next.get();
-      }
-      return current->data;
-    } else {
-      Node *current = tail;
-      for (size_t i = this->size - 1; i > pos; i--) {
-        current = current->prev;
-      }
-      return current->data;
-    }
-  }
-
-  T &operator[](size_t pos) {
-    if (pos >= this->size) {
-      throw std::out_of_range("Posição fora dos limites");
-    }
-
-    if (pos < this->size / 2) {
-      Node *current = head.get();
-      for (size_t i = 0; i < pos; i++) {
-        current = current->next.get();
-      }
-      return current->data;
-    } else {
-      Node *current = tail;
-      for (size_t i = this->size - 1; i > pos; i--) {
-        current = current->prev;
-      }
-      return current->data;
-    }
+    std::cout << std::endl;
   }
 };
