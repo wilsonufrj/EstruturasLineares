@@ -1,3 +1,4 @@
+#include "LinearDataStructure.hpp"
 template <typename T>
 class DoublyLinkedList : public LinearDataStructure<T> {
  private:

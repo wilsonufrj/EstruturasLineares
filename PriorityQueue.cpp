@@ -3,10 +3,12 @@
 #include <memory>
 #include <stdexcept>
 
+#include "DoublyLinkedList.cpp"
+
 template <typename T>
 class PriorityQueue {
  private:
-  SortedDoublyLinkedList<T> list;
+  DoublyLinkedList<T> list;
 
  public:
   PriorityQueue() = default;

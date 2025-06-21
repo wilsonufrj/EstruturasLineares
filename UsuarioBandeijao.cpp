@@ -5,6 +5,8 @@
 #include <memory>
 #include <stdexcept>
 
+#include "Queue.cpp"
+
 class UsuarioBandejao {
  private:
   int id;

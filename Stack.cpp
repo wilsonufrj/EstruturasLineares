@@ -1,3 +1,5 @@
+#include "LinearDataStructure.hpp"
+
 template <typename T>
 class Stack : public LinearDataStructure<T> {
  private:

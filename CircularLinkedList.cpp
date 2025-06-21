@@ -1,3 +1,5 @@
+#include "LinearDataStructure.hpp"
+
 template <typename T>
 class CircularLinkedList : public LinearDataStructure<T> {
  private:
@@ -50,7 +52,7 @@ class CircularLinkedList : public LinearDataStructure<T> {
       tail = head.get();
       tail->next = std::move(head);
     } else {
-      newNode->next = std::move(head)
+      newNode->next = std::move(head);
     }
     this->size++;
   }

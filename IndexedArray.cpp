@@ -1,3 +1,5 @@
+#include "LinearDataStructure.hpp"
+
 template <typename T>
 class IndexedArray : public LinearDataStructure<T> {
  private:
@@ -90,8 +92,8 @@ class IndexedArray : public LinearDataStructure<T> {
   }
 
   virtual void sort() {
-    for (size_t i = 0; i < size - 1; i++) {
-      for (size_t j = 0; j < size - i - 1; j++) {
+    for (size_t i = 0; i < this->size - 1; i++) {
+      for (size_t j = 0; j < this->size - i - 1; j++) {
         if (getAtPosition(j) > getAtPosition(j + 1)) {
           swap(j, j + 1);
         }

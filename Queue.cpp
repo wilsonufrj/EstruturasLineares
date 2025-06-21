@@ -1,3 +1,5 @@
+#include "LinearDataStructure.hpp"
+
 template <typename T>
 class Queue : public LinearDataStructure<T> {
  private:

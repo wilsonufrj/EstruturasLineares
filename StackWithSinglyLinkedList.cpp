@@ -1,3 +1,4 @@
+#include "SinglyLinkedList.cpp"
 template <typename T>
 class StackWithSinglyLinkedList : public LinearDataStructure<T> {
  private:

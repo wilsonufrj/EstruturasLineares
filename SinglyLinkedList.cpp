@@ -1,3 +1,5 @@
+#include "LinearDataStructure.hpp"
+
 template <typename T>
 class SinglyLinkedList : public LinearDataStructure<T> {
  private:
